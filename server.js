@@ -61,13 +61,16 @@ app.post('/api/todos', function create(req, res) {
   var newTodo = req.body; 
 
   if (todos.length > 0) {
-    newTodo.id = todos[todos.length - 1]._id + 1;
+    newTodo._id = todos[todos.length - 1]._id + 1;
   }
   else {
-    newTodo.id = 1;
+    newTodo._id = 1;
   }
   todos.push(newTodo);
-  res.json(newTodo);   
+
+  res.json(newTodo);  
+
+  console.log(newTodo); 
 });
 
 
@@ -96,9 +99,10 @@ app.put('/api/todos/:id', function update(req, res) {
           todos[i].task = req.body.task;
           todos[i].description = req.body.description;
           console.log('stuff');
+          res.json(todos[i]);
         }
       }
-  res.json(todos[i]);
+  //res.json(todos[i]);
 
 });
 
