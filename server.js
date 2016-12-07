@@ -5,6 +5,7 @@ var express = require('express'),
 
 // configure bodyParser (for receiving form data)
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
@@ -53,40 +54,66 @@ app.get('/api/todos', function index(req, res) {
   res.json({todos: todos});
 });
 
+
 app.post('/api/todos', function create(req, res) {
   /* This endpoint will add a todo to our "database"
   and respond with the newly created todo. */
+  var newTodo = req.body; 
 
-   todos.push({
-      task: req.body.task,
-      description: req.body.description
-   });
-
-   console.log(req.body);
-
-   res.send("xyz");
-
+  if (todos.length > 0) {
+    newTodo.id = todos[todos.length - 1]._id + 1;
+  }
+  else {
+    newTodo.id = 1;
+  }
+  todos.push(newTodo);
+  res.json(newTodo);   
 });
 
-app.get('/api/todos/:id', function show(req, res) {
+
+app.get('/api/todos/:id', function show(req, res, _id) {
   /* This endpoint will return a single todo with the
-   * id specified in the route parameter (:id)
-   */
-  res.json({todos:"_id"});
+   * id specified in the route parameter (:id) */
+  //console.log(req.params.id);
+  for (var i = 0; i < todos.length; i++) {
+    //console.log(todos[i]._id);
+    if (req.params.id == todos[i]._id) {
+    res.json(todos[i]);  
+    }
+  } 
 });
+
 
 app.put('/api/todos/:id', function update(req, res) {
   /* This endpoint will update a single todo with the
    * id specified in the route parameter (:id) and respond
-   * with the newly updated todo.
-   */
+   * with the newly updated todo. */
+
+   //console.log(req.params.id);
+
+      for (var i = 0; i < todos.length; i++) {
+        if (req.params.id == todos[i]._id) {
+          todos[i].task = req.body.task;
+          todos[i].description = req.body.description;
+          console.log('stuff');
+        }
+      }
+  res.json(todos[i]);
+
 });
+
 
 app.delete('/api/todos/:id', function destroy(req, res) {
   /* This endpoint will delete a single todo with the
    * id specified in the route parameter (:id) and respond
-   * with deleted todo.
-   */
+   * with deleted todo. */
+  for (var i = 0; i < todos.length; i++) {
+    //not being parsed
+    if (req.params.id == todos[i]._id) {
+      todos.splice(todos[i], 1);  
+    }
+  }
+  res.json(todos[i]);
 });
 
 /**********
